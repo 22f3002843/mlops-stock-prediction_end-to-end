@@ -1,0 +1,21 @@
+# Raw Datasets & Splits (Tracked via DVC instead)
+data/v0/
+data/v1/
+data/*.csv
+
+# Feast Binary Outputs & Generated Datasets
+feature_repository/data/
+*.parquet
+*.db
+*.pb
+*.pkl
+*.bin
+
+# Python / Environment Artifacts
+__pycache__/
+*.pyc
+.venv/
+.env
+
+# GCP & Keys
+service-account-key.json
