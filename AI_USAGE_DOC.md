@@ -4,14 +4,15 @@
 > List all GenAI / LLM tools used during the exam  
 > Provide **public share links** to AI chats or attach conversation files if links are not available  
 
-- Tool Name
-    - Purpose :
-    - Shared Chat Link :
-    - Notes (optional) :
+- Tool Name : GEMINI
+    - Purpose : Fixing Errors and scripts creation
+    - Shared Chat Link : https://share.gemini.google/xkYzjt9RNzbq
+    - Notes (optional) : None
 
 *If a tool does not support link sharing, please specify and paste prompt-response logs in next Section*
 
 ---
+
 
 ## Prompts and Responses Used
 > Include **all prompts** that contributed to solving the exam tasks
@@ -23,6 +24,3 @@
     - Response Log:
 ---
 
-### Tool Name #2: ___________________
-- Prompt 1:
-    - Response Log:
