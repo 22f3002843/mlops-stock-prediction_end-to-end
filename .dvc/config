@@ -1,4 +1,0 @@
-[core]
-    remote = gcs_remote
-['remote "gcs_remote"']
-    url = gs://mlops-oppe1-bucket-22f3002843/dvcstore
