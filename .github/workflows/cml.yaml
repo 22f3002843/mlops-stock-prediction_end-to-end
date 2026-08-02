@@ -14,17 +14,22 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
+      - name: Setup Node.js (Node 20)
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install CML CLI
+        run: npm install -g @dvcorg/cml
+
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
 
-      - name: Install Dependencies
+      - name: Install Python Dependencies
         run: |
           pip install --upgrade numpy scikit-learn pandas matplotlib mlflow
-
-      - name: Setup CML
-        uses: iterative/setup-cml@v1
 
       - name: Regenerate Training Data & Evaluate
         run: |
@@ -41,5 +46,4 @@ jobs:
           echo "## 📊 CML Pipeline Evaluation Report" > report.md
           cat metrics.txt >> report.md
           echo "### 📈 Confusion Matrix" >> report.md
-          cml-publish confusion_matrix.png --md >> report.md
-          cml-send-comment report.md
+          cml comment create report.md --watermark-title="CML Report"
