@@ -1,0 +1,45 @@
+name: Continuous Integration & CML Report
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  cml_run:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install Dependencies
+        run: |
+          pip install --upgrade numpy scikit-learn pandas matplotlib mlflow
+
+      - name: Setup CML
+        uses: iterative/setup-cml@v1
+
+      - name: Regenerate Training Data & Evaluate
+        run: |
+          python compute_features.py v0
+          python get_training_data.py
+          python train_and_evaluate.py v0
+          python tune_and_register.py
+          python evaluate_cml.py
+
+      - name: Post CML Report
+        env:
+          REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "## 📊 CML Pipeline Evaluation Report" > report.md
+          cat metrics.txt >> report.md
+          echo "### 📈 Confusion Matrix" >> report.md
+          cml-publish confusion_matrix.png --md >> report.md
+          cml-send-comment report.md
