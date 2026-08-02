@@ -34,11 +34,8 @@ jobs:
         run: |
           pip install --upgrade numpy scikit-learn pandas matplotlib mlflow
 
-      - name: Regenerate Training Data & Evaluate
+      - name: Run Model Tuning & CML Evaluation
         run: |
-          python compute_features.py v0
-          python get_training_data.py
-          python train_and_evaluate.py v0
           python tune_and_register.py
           python evaluate_cml.py
 
