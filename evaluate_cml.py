@@ -14,10 +14,11 @@ def run_cml_evaluation():
     try:
         model = mlflow.sklearn.load_model(model_uri)
     except Exception:
-        # Fallback to local run artifact if model registry alias differs
+        # Fallback to top-performing run artifact if registry alias differs
         client = mlflow.tracking.MlflowClient()
+        exp = client.get_experiment_by_name("Stock_Movement_Hyperparameter_Tuning")
         latest_runs = client.search_runs(
-            experiment_ids=[client.get_experiment_by_name("Stock_Movement_Hyperparameter_Tuning").experiment_id],
+            experiment_ids=[exp.experiment_id],
             order_by=["metrics.f1_score DESC"],
             max_results=1
         )
@@ -36,11 +37,11 @@ def run_cml_evaluation():
     # ==========================================
     print("🔍 Running Feature Sanity Checks...")
     
-    # Sanity Test 1: rolling_avg_10 must be positive and non-null
+    # Sanity Test 1: rolling_avg_10 must be non-null and strictly positive
     assert not df['rolling_avg_10'].isnull().any(), "Sanity Check Failed: Nulls found in rolling_avg_10!"
     assert (df['rolling_avg_10'] > 0).all(), "Sanity Check Failed: Negative or zero prices found in rolling_avg_10!"
     
-    # Sanity Test 2: volume_sum_10 must be non-negative and non-null
+    # Sanity Test 2: volume_sum_10 must be non-null and non-negative
     assert not df['volume_sum_10'].isnull().any(), "Sanity Check Failed: Nulls found in volume_sum_10!"
     assert (df['volume_sum_10'] >= 0).all(), "Sanity Check Failed: Negative values found in volume_sum_10!"
     
@@ -57,7 +58,7 @@ def run_cml_evaluation():
     rec = recall_score(y_test, preds, zero_division=0)
     f1 = f1_score(y_test, preds, zero_division=0)
 
-    # 1. Write metrics to text file for CML
+    # 1. Save metrics to text file for CML
     with open("metrics.txt", "w") as f:
         f.write("### 🚀 Model Evaluation Metrics\n\n")
         f.write(f"- **Accuracy**: {acc:.4f}\n")
@@ -65,8 +66,8 @@ def run_cml_evaluation():
         f.write(f"- **Recall**: {rec:.4f}\n")
         f.write(f"- **F1-Score**: {f1:.4f}\n\n")
         f.write("### 🧪 Feature Sanity Checks\n")
-        f.write("- ✅ `rolling_avg_10`: All values are non-null and positive.\n")
-        f.write("- ✅ `volume_sum_10`: All values are non-null and non-negative.\n")
+        f.write("- ✅ `rolling_avg_10`: All values non-null and strictly positive.\n")
+        f.write("- ✅ `volume_sum_10`: All values non-null and non-negative.\n")
 
     # 2. Plot & save Confusion Matrix plot
     cm = confusion_matrix(y_test, preds)

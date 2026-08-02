@@ -6,16 +6,27 @@ on:
   pull_request:
     branches: [ main ]
 
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+  id-token: write  # Required for GCP Workload Identity Federation OIDC authentication
+
 env:
   ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
 
 jobs:
   cml_run:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
+
+      - name: Authenticate to GCP via Workload Identity Federation
+        uses: google-github-actions/auth@v1
+        with:
+          workload_identity_provider: 'projects/588656205385/locations/global/workloadIdentityPools/github-actions-pool/providers/github-actions-provider'
+          service_account: 'github-actions-sa@mlops-501911.iam.gserviceaccount.com'
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
@@ -32,7 +43,7 @@ jobs:
 
       - name: Install Python Dependencies
         run: |
-          pip install --upgrade numpy scikit-learn pandas matplotlib mlflow
+          pip install --upgrade numpy scikit-learn pandas matplotlib mlflow dvc[gcs]
 
       - name: Run Model Tuning & CML Evaluation
         run: |
