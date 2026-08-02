@@ -5,7 +5,7 @@
 > Provide **public share links** to AI chats or attach conversation files if links are not available  
 
 - Tool Name : GEMINI
-    - Purpose : Fixing Errors and scripts creation
+    - Purpose : Fixing Errors and creating scripts and README creation
     - Shared Chat Link : https://share.gemini.google/xkYzjt9RNzbq
     - Notes (optional) : None
 
